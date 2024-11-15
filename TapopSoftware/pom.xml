@@ -79,5 +79,18 @@
 	<version>4.26.0</version>
 	</dependency>
 	
-</dependencies>
+	<dependency>
+		<groupId>Selenium</groupId>
+		<artifactId>Seleniumwebdriver</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</dependency>
+	
+<!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+<dependency>
+    <groupId>io.github.bonigarcia</groupId>
+    <artifactId>webdrivermanager</artifactId>
+    <version>5.9.2</version>
+</dependency>
+
+	</dependencies>
 </project>
