@@ -19,18 +19,20 @@
 	<version>4.26.0</version>
 	</dependency>
 	
+	<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java -->
+	<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.26.0</version>
+	</dependency>
+
+	
 	<dependency>
 	<groupId>org.seleniumhq.selenium</groupId>
 	<artifactId>selenium-devtools-v128</artifactId>
 	<version>4.26.0</version>
 	</dependency>
-	
-	<dependency>
-	<groupId>org.seleniumhq.selenium</groupId>
-	<artifactId>selenium-devtools-v129</artifactId>
-	<version>4.26.0</version>
-	</dependency>
-	
+		
 	<dependency>
 	<groupId>org.seleniumhq.selenium</groupId>
 	<artifactId>selenium-devtools-v130</artifactId>
@@ -79,18 +81,20 @@
 	<version>4.26.0</version>
 	</dependency>
 	
+	<!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-server -->
 	<dependency>
-		<groupId>Selenium</groupId>
-		<artifactId>Seleniumwebdriver</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-server</artifactId>
+    <version>4.0.0-alpha-2</version>
 	</dependency>
+
 	
-<!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
-<dependency>
+	<!-- https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager -->
+	<dependency>
     <groupId>io.github.bonigarcia</groupId>
     <artifactId>webdrivermanager</artifactId>
     <version>5.9.2</version>
-</dependency>
+	</dependency>
 
 	</dependencies>
 </project>

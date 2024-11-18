@@ -14,7 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 import java.util.function.Function;
 
-public class TP01_FT01_CA001_CreateGroupWithBackOfficelevel {
+public class TP01_FT01_CA001_CreateGroupWithFullLevel {
 
     private static WebDriver driver;
 
@@ -35,7 +35,7 @@ public class TP01_FT01_CA001_CreateGroupWithBackOfficelevel {
 
         } finally {
             // Close the driver when done to free up resources
-            //driver.quit();
+            driver.quit();
         }
     }
 
