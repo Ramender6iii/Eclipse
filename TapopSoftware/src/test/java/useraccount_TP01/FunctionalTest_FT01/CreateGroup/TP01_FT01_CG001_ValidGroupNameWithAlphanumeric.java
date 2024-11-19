@@ -12,7 +12,6 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
-import java.util.function.Function;
 
 public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
 

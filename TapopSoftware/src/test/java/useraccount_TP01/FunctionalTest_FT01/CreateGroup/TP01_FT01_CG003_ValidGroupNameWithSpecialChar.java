@@ -12,7 +12,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class TP01_FT01_CG001_ValidGroupNameWithSpecialChar {
+public class TP01_FT01_CG003_ValidGroupNameWithSpecialChar {
 
     private static WebDriver driver;
 

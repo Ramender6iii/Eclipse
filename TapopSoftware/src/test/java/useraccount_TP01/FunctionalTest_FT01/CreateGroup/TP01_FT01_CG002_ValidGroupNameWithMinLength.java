@@ -1,8 +1,6 @@
 package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
 
 import java.time.Duration;
-import java.util.function.Function;
-
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
