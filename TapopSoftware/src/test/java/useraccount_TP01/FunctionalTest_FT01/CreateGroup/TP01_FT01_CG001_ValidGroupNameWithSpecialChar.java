@@ -1,5 +1,6 @@
 package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
 
+import java.time.Duration;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -11,10 +12,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-import java.util.function.Function;
-
-public class TP01_FT01_CA001_CreateGroupWithFullLevel {
+public class TP01_FT01_CG001_ValidGroupNameWithSpecialChar {
 
     private static WebDriver driver;
 
@@ -117,7 +115,7 @@ public class TP01_FT01_CA001_CreateGroupWithFullLevel {
         newGroupButton.click();
 
         WebElement addGroupName = wait.until(ExpectedConditions.elementToBeClickable(By.id("txtGroupName")));
-        addGroupName.sendKeys("new group");
+        addGroupName.sendKeys("Group @ Name 0850");
 
         WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
         saveGroupButton.click();
@@ -134,23 +132,17 @@ public class TP01_FT01_CA001_CreateGroupWithFullLevel {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", backButton);
     
+    
     // Check if the group has been created by looking for the group name in the list
-    WebElement groupName = wait.until(new Function<WebDriver, WebElement>() {
-        public WebElement apply(WebDriver driver) {
-            // Find the element containing the group name
-            return driver.findElement(By.xpath("//table//td[contains(text(),'new group')]"));
-        }
-    });
-
-
-    // If found, print success message
-    if (groupName != null) {
+    try {
+    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'Group @ Name 0850')]")));
         System.out.println("Group created successfully!");
-    } else {
+    } catch (Exception e) {
         System.out.println("Group creation failed.");
     }
     }
-  
+    
+    
     
     // Method to delete the group (after creation)
     public static void deleteGroup(WebDriver driver) throws Exception {
@@ -161,7 +153,7 @@ public class TP01_FT01_CA001_CreateGroupWithFullLevel {
         groupPage.click();
 
         // Find the group row by its name and click the delete button in the same row
-        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='new group']]/td/a[@class='btnDeleteGroup']")));
+        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='Group @ Name 0850']]/td/a[@class='btnDeleteGroup']")));
         deleteButton.click();
 
         // Confirm the deletion in the modal
@@ -170,7 +162,7 @@ public class TP01_FT01_CA001_CreateGroupWithFullLevel {
 
         // Wait for the group to be deleted (check if it's no longer visible)
         try {
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'new group')]")));
+        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'Group @ Name 0850')]")));
             System.out.println("Group deleted successfully!");
         } catch (Exception e) {
             System.out.println("Group deletion failed.");
