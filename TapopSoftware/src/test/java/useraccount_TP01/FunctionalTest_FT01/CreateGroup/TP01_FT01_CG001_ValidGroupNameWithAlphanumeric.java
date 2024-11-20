@@ -16,6 +16,9 @@ import java.time.Duration;
 public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
 
     private static WebDriver driver;
+    
+    public static class GroupManagementTest {
+    	private static final String GROUP_NAME = "New Group 0102";
 
     public static void main(String[] args) throws Exception {
         // Set ChromeOptions to disable notifications
@@ -116,7 +119,7 @@ public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
         newGroupButton.click();
 
         WebElement addGroupName = wait.until(ExpectedConditions.elementToBeClickable(By.id("txtGroupName")));
-        addGroupName.sendKeys("New Group 0102");
+        addGroupName.sendKeys(GROUP_NAME);
 
         WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
         saveGroupButton.click();
@@ -153,7 +156,7 @@ public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
     
     // Check if the group has been created by looking for the group name in the list
     try {
-    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'New Group 0102')]")));
+    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
         System.out.println("Group created successfully!");
     } catch (Exception e) {
         System.out.println("Group creation failed.");
@@ -171,7 +174,7 @@ public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
         groupPage.click();
 
         // Find the group row by its name and click the delete button in the same row
-        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='New Group 0102']]/td/a[@class='btnDeleteGroup']")));
+        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='"+ GROUP_NAME +"']]/td/a[@class='btnDeleteGroup']")));
         deleteButton.click();
 
         // Confirm the deletion in the modal
@@ -180,10 +183,11 @@ public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
 
         // Wait for the group to be deleted (check if it's no longer visible)
         try {
-        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'New Group 0102')]")));
+        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
             System.out.println("Group deleted successfully!");
         } catch (Exception e) {
             System.out.println("Group deletion failed.");
         }
+    }
     }
 }
