@@ -1,6 +1,7 @@
-package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
+package useraccount_TP01.BoundaryTest_BT01;
 
 import java.time.Duration;
+
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -11,9 +12,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class TP01_FT01_CG002_ValidGroupNameWithMinLength {
+public class TP01_FT01_CG004_ValidGroupNameWithMaxLength {
 
     private static WebDriver driver;
+    
+    public static class GroupManagementTest {
+    	private static final String GROUP_NAME = "Max Length group name 34567890";
 
     public static void main(String[] args) throws Exception {
         // Set ChromeOptions to disable notifications
@@ -114,7 +118,7 @@ public class TP01_FT01_CG002_ValidGroupNameWithMinLength {
         newGroupButton.click();
 
         WebElement addGroupName = wait.until(ExpectedConditions.elementToBeClickable(By.id("txtGroupName")));
-        addGroupName.sendKeys("A");
+        addGroupName.sendKeys(GROUP_NAME);
 
         WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
         saveGroupButton.click();
@@ -134,7 +138,7 @@ public class TP01_FT01_CG002_ValidGroupNameWithMinLength {
     
     // Check if the group has been created by looking for the group name in the list
     try {
-    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'A')]")));
+    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
         System.out.println("Group created successfully!");
     } catch (Exception e) {
         System.out.println("Group creation failed.");
@@ -152,7 +156,7 @@ public class TP01_FT01_CG002_ValidGroupNameWithMinLength {
         groupPage.click();
 
         // Find the group row by its name and click the delete button in the same row
-        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='A']]/td/a[@class='btnDeleteGroup']")));
+        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='"+ GROUP_NAME +"']]/td/a[@class='btnDeleteGroup']")));
         deleteButton.click();
 
         // Confirm the deletion in the modal
@@ -161,10 +165,11 @@ public class TP01_FT01_CG002_ValidGroupNameWithMinLength {
 
         // Wait for the group to be deleted (check if it's no longer visible)
         try {
-        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'A')]")));
+        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
             System.out.println("Group deleted successfully!");
         } catch (Exception e) {
             System.out.println("Group deletion failed.");
         }
     }
+}
 }

@@ -12,12 +12,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class TP01_FT01_CG004_ValidGroupNameWithMaxLength {
+public class TP01_FT01_CG006_ValidGroupNameWithSpecialChar {
 
     private static WebDriver driver;
     
     public static class GroupManagementTest {
-    	private static final String GROUP_NAME = "Max Length group name 34567890";
+    	private static final String GROUP_NAME = "New Group @ 0102";
 
     public static void main(String[] args) throws Exception {
         // Set ChromeOptions to disable notifications
@@ -135,6 +135,23 @@ public class TP01_FT01_CG004_ValidGroupNameWithMaxLength {
         JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", backButton);
     
+         //another method to search group creation
+        /*   // Check if the group has been created by looking for the group name in the list
+    	WebElement groupName = wait.until(new Function<WebDriver, WebElement>() {
+        public WebElement apply(WebDriver driver) {
+            // Find the element containing the group name
+            return driver.findElement(By.xpath("//table//td[contains(text(),'New Group 0102')]"));
+        }
+    });
+
+
+    // If found, print success message
+    if (groupName != null) {
+        System.out.println("Group created successfully!");
+    } else {
+        System.out.println("Group creation failed.");
+    }
+    }*/
     
     // Check if the group has been created by looking for the group name in the list
     try {
@@ -171,5 +188,5 @@ public class TP01_FT01_CG004_ValidGroupNameWithMaxLength {
             System.out.println("Group deletion failed.");
         }
     }
-}
+    }
 }

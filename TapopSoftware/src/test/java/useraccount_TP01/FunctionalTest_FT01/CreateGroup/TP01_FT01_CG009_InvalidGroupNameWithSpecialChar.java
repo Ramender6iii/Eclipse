@@ -1,5 +1,6 @@
 package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
 
+import java.time.Duration;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -11,14 +12,12 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-public class TP01_FT01_CG001_ValidGroupNameWithAlphanumeric {
+public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
 
     private static WebDriver driver;
     
     public static class GroupManagementTest {
-    	private static final String GROUP_NAME = "New Group 0102";
+    	private static final String GROUP_NAME = "New ~ Group";
 
     public static void main(String[] args) throws Exception {
         // Set ChromeOptions to disable notifications

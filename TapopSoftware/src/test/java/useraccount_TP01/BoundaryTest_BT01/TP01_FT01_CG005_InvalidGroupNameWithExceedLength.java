@@ -1,4 +1,4 @@
-package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
+package useraccount_TP01.BoundaryTest_BT01;
 
 import java.time.Duration;
 
