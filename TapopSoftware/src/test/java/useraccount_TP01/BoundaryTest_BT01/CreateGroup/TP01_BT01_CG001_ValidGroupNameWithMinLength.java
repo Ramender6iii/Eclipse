@@ -1,4 +1,4 @@
-package useraccount_TP01.BoundaryTest_BT01;
+package useraccount_TP01.BoundaryTest_BT01.CreateGroup;
 
 import java.time.Duration;
 import org.openqa.selenium.Alert;
@@ -11,7 +11,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class TP01_FT01_CG002_ValidGroupNameWithMinLength {
+public class TP01_BT01_CG001_ValidGroupNameWithMinLength {
 
     private static WebDriver driver;
 
