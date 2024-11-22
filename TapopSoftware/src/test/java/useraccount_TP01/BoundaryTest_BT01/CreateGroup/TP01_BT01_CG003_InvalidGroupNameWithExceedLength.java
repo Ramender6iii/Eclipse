@@ -18,91 +18,88 @@ public class TP01_BT01_CG003_InvalidGroupNameWithExceedLength {
  
     // Declare enteredText here so it can be used across different methods
     private static String enteredText;
-    
+   
+    // Class-level variables for credentials
+    private static final String USERNAME = "admin";           // Username for login
+    private static final String PASSWORD = "Admin123";       // Password for login
+    private static final String GROUP_NAME = "Exceed Max Length group name 34567890";     // Exceeding Group name
+
+    // GroupManagementTest class to handle the test flow
     public static class GroupManagementTest {
-    	private static final String GROUP_NAME = "Exceed Max Length group name 34567890";
 
     	   public static void main(String[] args) throws Exception {
-    	        // Set ChromeOptions to disable notifications
-    	        ChromeOptions options = new ChromeOptions();
-    	        options.addArguments("--disable-notifications");
+               // Set ChromeOptions to disable notifications
+               ChromeOptions options = new ChromeOptions();
+               options.addArguments("--disable-notifications");
 
-    	        driver = new ChromeDriver(options);
+               driver = new ChromeDriver(options);
 
-    	        try {
-    	            // Navigate to the login page
-    	            driver.get("http://192.168.5.179/");
-    	            System.out.println("Page title: " + driver.getTitle());
+               try {
+                   // Navigate to the login page and login
+                   driver.get("http://192.168.5.179/");
+                   loginAndCreateGroup(driver, USERNAME, PASSWORD);
 
-    	            // Log in to the application and create a group
-    	            loginAndCreateGroup(driver, "admin", "Admin123");
+               } finally {
+                   // Close the driver when done
+                   driver.quit();
+               }
+           }
 
-    	        } finally {
-    	            // Close the driver when done to free up resources
-    	            driver.quit();
-    	        }
-    	    }
+           // Method to handle login process using class-level variables
+           private static void login(WebDriver driver, String usernameText, String passwordText) throws Exception {
+               WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-    	    // Method to handle login process
-    	    private static void login(WebDriver driver, String usernameText, String passwordText) throws Exception {
-    	        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+               // Wait for the login screen to load
+               Thread.sleep(3000); // Adjust if needed for your application
 
-    	        // Wait for the login screen to load
-    	        Thread.sleep(3000); // Adjust if needed for your application
+               // Wait for and click the login button
+               WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("signin")));
+               loginButton.click();
 
-    	        // Wait for the login button and click it
-    	        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("signin")));
-    	        loginButton.click();
+               // Enter username and password
+               WebElement username = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-user")));
+               username.sendKeys(usernameText);  // Use class-level USERNAME variable
 
-    	        // Locate and enter the username
-    	        WebElement username = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-user")));
-    	        username.sendKeys(usernameText);
+               WebElement password = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-pass")));
+               password.sendKeys(passwordText);  // Use class-level PASSWORD variable
 
-    	        // Locate and enter the password
-    	        WebElement password = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-pass")));
-    	        password.sendKeys(passwordText);
+               // Submit login
+               WebElement loginSubmitButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-button")));
+               loginSubmitButton.click();
+           }
 
-    	        // Locate and click the login submit button
-    	        WebElement loginSubmitButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-button")));
-    	        loginSubmitButton.click();
-    	    }
+           // Combined method: login and create group
+           private static void loginAndCreateGroup(WebDriver driver, String usernameText, String passwordText) throws Exception {
+               login(driver, usernameText, passwordText);  // First, login
+               checkLoginSuccess(driver, usernameText);  // Verify login success using the provided username
+               createGroup(driver);  // Create the group
+               deleteGroup(driver);  // After creating the group, delete it
+           }
+           
+           // Method to check login success
+           private static void checkLoginSuccess(WebDriver driver, String expectedUsername) throws Exception {
+               WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-    	    // Method to check if login was successful by looking for the "login name" link
-    	    private static void checkLoginSuccess(WebDriver driver) throws Exception {
-    	        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // Wait up to 20 seconds
+               try {
+                   WebElement loginUserButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdownMenu1")));
+                   WebElement usernameSpan = loginUserButton.findElement(By.className("btn-sign-text"));
+                   String loggedInUsername = usernameSpan.getText();
 
-    	        try {
-    	            // Locate the button that contains the username (using the class or id)
-    	            WebElement loginUserButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdownMenu1"))); // Locate the button by its id
+                   // Check if the logged-in username matches the expected username
+                   if (expectedUsername.equals(loggedInUsername)) {
+                       System.out.println("Login successful! Logged in as: " + loggedInUsername);
+                   } else {
+                       System.out.println("Login failed: Unexpected username. Expected: " + expectedUsername + ", Found: " + loggedInUsername);
+                   }
 
-    	            // Get the username from the span element with class 'btn-sign-text'
-    	            WebElement usernameSpan = loginUserButton.findElement(By.className("btn-sign-text"));
-
-    	            // Check if the username displayed matches the expected value
-    	            String loggedInUsername = usernameSpan.getText();
-    	            
-    	            if ("admin".equals(loggedInUsername)) {
-    	                System.out.println("Login successful! Logged in as: " + loggedInUsername);
-    	            } else {
-    	                System.out.println("Login failed: Unexpected username.");
-    	                
-    	            }
-
-    	        } catch (Exception e) {
-    	            System.out.println("Login failed: Username not found.");
-    	            
-    	        }
-    	    }
+               } catch (Exception e) {
+                   System.out.println("Login failed: Username not found.");
+               }
+           }
+           
+           
     	   
-    	    // Combined method: login and create group
-    	    private static void loginAndCreateGroup(WebDriver driver, String usernameText, String passwordText) throws Exception {
-    	        login(driver, usernameText, passwordText);  // First, login
-    	        checkLoginSuccess(driver);  // Verify login success
-    	        createGroup(driver);  // Create the group
-    	        deleteGroup(driver);  // After creating the group, delete it
-    	    }
-
-            // Method to create a group (after login)
+             // Method to create a group (after login)
             public static void createGroup(WebDriver driver) throws Exception {
                 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
@@ -136,7 +133,7 @@ public class TP01_BT01_CG003_InvalidGroupNameWithExceedLength {
                 if (enteredText.equals(GROUP_NAME)) {
                     System.out.println("Test failed: The group name allows exceeding the maximum length.");
                 } else {
-                    System.out.println("Test passed: The group name is truncated to the maximum length (" + maxLen + ").");
+                    System.out.println("Test passed: The group name is truncated to the maximum length (" + maxLen + ", " + enteredText + ").");
                     System.out.println("The group name does not allow exceeding the length.");
                 }
 

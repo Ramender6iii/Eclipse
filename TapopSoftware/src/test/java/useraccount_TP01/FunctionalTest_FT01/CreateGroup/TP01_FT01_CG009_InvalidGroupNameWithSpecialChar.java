@@ -16,177 +16,200 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
 
     private static WebDriver driver;
     
+
+    // Class-level variables for credentials
+    private static final String USERNAME = "admin";           // Username for login
+    private static final String PASSWORD = "Admin123";       // Password for login
+    private static final String GROUP_NAME = "New () Group";  // Group name (with ~ invalid Special Character)
+    
+    // Declare enteredText here so it can be used across different methods
+    private static String enteredText;
+
+
+    // GroupManagementTest class to handle the test flow
     public static class GroupManagementTest {
-    	private static final String GROUP_NAME = "New ~ Group";
 
-    public static void main(String[] args) throws Exception {
-        // Set ChromeOptions to disable notifications
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--disable-notifications");
+        public static void main(String[] args) throws Exception {
+            // Set ChromeOptions to disable notifications
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--disable-notifications");
 
-        driver = new ChromeDriver(options);
+            driver = new ChromeDriver(options);
 
-        try {
-            // Navigate to the login page
-            driver.get("http://192.168.5.179/");
-            System.out.println("Page title: " + driver.getTitle());
+            try {
+                // Navigate to the login page and login
+                driver.get("http://192.168.5.179/");
+                loginAndCreateGroup(driver, USERNAME, PASSWORD);
 
-            // Log in to the application and create a group
-            loginAndCreateGroup(driver, "admin", "Admin123");
-
-        } finally {
-            // Close the driver when done to free up resources
-            driver.quit();
+            } finally {
+                // Close the driver when done
+               driver.quit();
+            }
         }
-    }
 
-    // Method to handle login process
-    private static void login(WebDriver driver, String usernameText, String passwordText) throws Exception {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        // Method to handle login process using class-level variables
+        private static void login(WebDriver driver, String usernameText, String passwordText) throws Exception {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
 
-        // Wait for the login screen to load
-        Thread.sleep(3000); // Adjust if needed for your application
+            // Wait for the login screen to load
+            Thread.sleep(3000); // Adjust if needed for your application
 
-        // Wait for the login button and click it
-        WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("signin")));
-        loginButton.click();
+            // Wait for and click the login button
+            WebElement loginButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("signin")));
+            loginButton.click();
 
-        // Locate and enter the username
-        WebElement username = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-user")));
-        username.sendKeys(usernameText);
+            // Enter username and password
+            WebElement username = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-user")));
+            username.sendKeys(usernameText);  // Use class-level USERNAME variable
 
-        // Locate and enter the password
-        WebElement password = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-pass")));
-        password.sendKeys(passwordText);
+            WebElement password = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-pass")));
+            password.sendKeys(passwordText);  // Use class-level PASSWORD variable
 
-        // Locate and click the login submit button
-        WebElement loginSubmitButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-button")));
-        loginSubmitButton.click();
-    }
+            // Submit login
+            WebElement loginSubmitButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("login-button")));
+            loginSubmitButton.click();
+        }
 
-    // Method to check if login was successful by looking for the "login name" link
-    private static void checkLoginSuccess(WebDriver driver) throws Exception {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // Wait up to 20 seconds
+        // Combined method: login and create group
+        private static void loginAndCreateGroup(WebDriver driver, String usernameText, String passwordText) throws Exception {
+            login(driver, usernameText, passwordText);  // First, login
+            checkLoginSuccess(driver, usernameText);  // Verify login success using the provided username
+            createGroup(driver);  // Create the group
+            deleteGroup(driver);  // After creating the group, delete it
+        }
+        
+        // Method to check login success
+        private static void checkLoginSuccess(WebDriver driver, String expectedUsername) throws Exception {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-        try {
-            // Locate the button that contains the username (using the class or id)
-            WebElement loginUserButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdownMenu1"))); // Locate the button by its id
+            try {
+                WebElement loginUserButton = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("dropdownMenu1")));
+                WebElement usernameSpan = loginUserButton.findElement(By.className("btn-sign-text"));
+                String loggedInUsername = usernameSpan.getText();
 
-            // Get the username from the span element with class 'btn-sign-text'
-            WebElement usernameSpan = loginUserButton.findElement(By.className("btn-sign-text"));
+                // Check if the logged-in username matches the expected username
+                if (expectedUsername.equals(loggedInUsername)) {
+                    System.out.println("Login successful! Logged in as: " + loggedInUsername);
+                } else {
+                    System.out.println("Login failed: Unexpected username. Expected: " + expectedUsername + ", Found: " + loggedInUsername);
+                }
 
-            // Check if the username displayed matches the expected value
-            String loggedInUsername = usernameSpan.getText();
+            } catch (Exception e) {
+                System.out.println("Login failed: Username not found.");
+            }
+        }
+
+        // Method to create a group with invalid group name (invalid special character)
+        public static void createGroup(WebDriver driver) throws Exception {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20)); // Increase wait time
+
+            // Navigate to the group creation page
+            WebElement utility = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='menu-content']/ul/li[8]/a")));
+            utility.click();
+
+            WebElement userAccount = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='menu-content']/ul/li[8]/ul/li[1]/a/span")));
+            userAccount.click();
+
+            WebElement group = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+            group.click();
+
+            // Add new group
+            WebElement newGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnNewGroup")));
+            newGroupButton.click();
             
-            if ("admin".equals(loggedInUsername)) {
-                System.out.println("Login successful! Logged in as: " + loggedInUsername);
+            WebElement addGroupName = wait.until(ExpectedConditions.elementToBeClickable(By.id("txtGroupName")));
+            // Send the GROUP_NAME (which contain invalid special character)
+            addGroupName.sendKeys(GROUP_NAME);
+
+            // Get the value in the input field after sending the text (this is the truncated value)
+            enteredText = addGroupName.getAttribute("value");  // Save entered value to class-level variable
+
+            // Now compare the entered text with the sent data
+            if (enteredText.equals(GROUP_NAME)) {
+                System.out.println("Test failed: The group name allows invalid Special character.");
             } else {
-                System.out.println("Login failed: Unexpected username.");
-                
+                System.out.println("Test passed: The group name removed invalid Special character(" + enteredText + ").");
+                System.out.println("The group name does not invalid Special character.");
+            }
+            
+                        
+            WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
+            saveGroupButton.click();
+
+            // Check if an alert is present (handle alert error)
+            try {
+                Alert alert = wait.until(ExpectedConditions.alertIsPresent());
+                System.out.println("Alert message: " + alert.getText());
+                alert.accept();  // Accept the alert
+                return;  // Exit after handling the alert
+            } catch (Exception e) {
+                System.out.println("No alert found.");
             }
 
-        } catch (Exception e) {
-            System.out.println("Login failed: Username not found.");
+            // Wait for inline error message (if any)
+            try {
+            	//WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
+            	WebElement errorMessage = driver.findElement(By.id("errorMessageGroup"));
+                if (errorMessage.isDisplayed()) {
+                    System.out.println("Error message displayed: " + errorMessage.getText());
+                    return;  // Exit the method if the error is shown
+                }
+            } catch (Exception e) {
+                System.out.println("No inline error message found.");
+            }
+
+            // If no error, continue with the group creation process (though ideally, this should not happen for invalid inputs)
+            WebElement saveGroupLevelButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save")));
+            saveGroupLevelButton.click();
+
+            // Handle alert if present
+            try {
+                Alert alert = driver.switchTo().alert();
+                alert.accept();
+            } catch (Exception e) {
+                System.out.println("No alert to handle.");
+            }
+
+            WebElement backButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='w0']/div/div[3]/div[2]/a")));
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].click();", backButton);
             
+                      
+            // Check if the group has been created by looking for the group name in the list
+            try {
+            WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+            groupPage.click();
+            WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'" + enteredText + "')]")));
+            System.out.println("Invalid Group Name created! Group name: " + createdGroup.getText());
+            } catch (Exception e) {
+            System.out.println("Group creation failed.");
+            }
+            }    
+        
+        
+        // Method to delete the group (after creation)
+        public static void deleteGroup(WebDriver driver) throws Exception {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+            // Navigate back to the group management page
+            WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+            groupPage.click();
+
+            // Find the group row by its name and click the delete button in the same row
+            WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='" + enteredText + "']]/td/a[@class='btnDeleteGroup']")));
+            deleteButton.click();
+
+            // Confirm the deletion in the modal
+            WebElement confirmDeleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='btnModalConfirmSave']")));
+            confirmDeleteButton.click();
+
+            // Wait for the group to be deleted (check if it's no longer visible)
+            try {
+            	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'" + enteredText + "')]")));
+                System.out.println("Group deleted successfully!");
+            } catch (Exception e) {
+                System.out.println("Group deletion failed.");
+            }
+        }
         }
     }
-   
-    // Combined method: login and create group
-    private static void loginAndCreateGroup(WebDriver driver, String usernameText, String passwordText) throws Exception {
-        login(driver, usernameText, passwordText);  // First, login
-        checkLoginSuccess(driver);  // Verify login success
-        createGroup(driver);  // Create the group
-        deleteGroup(driver);  // After creating the group, delete it
-    }
-
-    // Method to create a group (after login)
-    public static void createGroup(WebDriver driver) throws Exception {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-        // Navigate to the group creation page
-        WebElement utility = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='menu-content']/ul/li[8]/a")));
-        utility.click();
-
-        WebElement userAccount = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='menu-content']/ul/li[8]/ul/li[1]/a/span")));
-        userAccount.click();
-
-        WebElement group = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
-        group.click();
-
-        // Add new group
-        WebElement newGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnNewGroup")));
-        newGroupButton.click();
-
-        WebElement addGroupName = wait.until(ExpectedConditions.elementToBeClickable(By.id("txtGroupName")));
-        addGroupName.sendKeys(GROUP_NAME);
-
-        WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
-        saveGroupButton.click();
-
-        WebElement saveGroupLevelButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save")));
-        saveGroupLevelButton.click();
-
-        // Handle the alert (accept the alert)
-        Alert alert = driver.switchTo().alert();
-        alert.accept();
-
-        // Wait for the page refresh after saving, then click the back button using JavaScript
-        WebElement backButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='w0']/div/div[3]/div[2]/a")));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", backButton);
-    
-         //another method to search group creation
-        /*   // Check if the group has been created by looking for the group name in the list
-    	WebElement groupName = wait.until(new Function<WebDriver, WebElement>() {
-        public WebElement apply(WebDriver driver) {
-            // Find the element containing the group name
-            return driver.findElement(By.xpath("//table//td[contains(text(),'New Group 0102')]"));
-        }
-    });
-
-
-    // If found, print success message
-    if (groupName != null) {
-        System.out.println("Group created successfully!");
-    } else {
-        System.out.println("Group creation failed.");
-    }
-    }*/
-    
-    // Check if the group has been created by looking for the group name in the list
-    try {
-    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
-        System.out.println("Group created successfully!");
-    } catch (Exception e) {
-        System.out.println("Group creation failed.");
-    }
-    }
-    
-    
-    
-    // Method to delete the group (after creation)
-    public static void deleteGroup(WebDriver driver) throws Exception {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-        // Navigate back to the group management page
-        WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
-        groupPage.click();
-
-        // Find the group row by its name and click the delete button in the same row
-        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='"+ GROUP_NAME +"']]/td/a[@class='btnDeleteGroup']")));
-        deleteButton.click();
-
-        // Confirm the deletion in the modal
-        WebElement confirmDeleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='btnModalConfirmSave']")));
-        confirmDeleteButton.click();
-
-        // Wait for the group to be deleted (check if it's no longer visible)
-        try {
-        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
-            System.out.println("Group deleted successfully!");
-        } catch (Exception e) {
-            System.out.println("Group deletion failed.");
-        }
-    }
-    }
-}

@@ -156,15 +156,20 @@ public class TP01_FT01_CG008_InvalidGroupNameWithEmptyName {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].click();", backButton);
 
-            // Check if the group has been created by looking for the group name in the list
-            try {
-                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and not(contains(text(), ' ')) and following-sibling::td//a[@class='btnDeleteGroup']]")));
-                System.out.println("Group name creation invalid!");
-            } catch (Exception e) {
-                System.out.println("Group creation failed.");
-            }
+   
+        // Check if the group has been created by looking for the group name in the list
+        try {
+        WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+        groupPage.click();
+        WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and not(contains(text(), ' ')) and following-sibling::td//a[@class='btnDeleteGroup']]")));
+        System.out.println("Group name creation invalid! Group name: " + createdGroup.getText());
+        } catch (Exception e) {
+        System.out.println("Group creation failed.");
         }
-
+        }    
+        
+        
+        
         // Method to delete the group if it exists
         public static void deleteGroup(WebDriver driver) throws Exception {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));

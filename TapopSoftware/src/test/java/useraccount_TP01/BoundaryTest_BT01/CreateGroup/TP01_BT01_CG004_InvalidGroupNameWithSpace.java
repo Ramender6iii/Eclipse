@@ -156,15 +156,20 @@ public class TP01_BT01_CG004_InvalidGroupNameWithSpace {
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].click();", backButton);
 
-            // Check if the group has been created by looking for the group name in the list
-            try {
-                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and text() != ' ' and following-sibling::td//a[@class='btnDeleteGroup']]")));
-                System.out.println("Group name creation invalid!");
-            } catch (Exception e) {
-                System.out.println("Group creation failed.");
-            }
-        }
 
+        // Check if the group has been created by looking for the group name in the list
+        try {
+        WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+        groupPage.click();
+        WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[normalize-space(text()) = '' and text() != '' and following-sibling::td//a[@class='btnDeleteGroup']]")));
+        System.out.println("Invalid Group Name created! Group name: " + createdGroup.getText());
+        } catch (Exception e) {
+        System.out.println("Group creation failed.");
+        }
+        }
+        
+        
+        
         // Method to delete the group if it exists
         public static void deleteGroup(WebDriver driver) throws Exception {
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
@@ -174,7 +179,7 @@ public class TP01_BT01_CG004_InvalidGroupNameWithSpace {
             groupPage.click();
 
             // Find and click the delete button for the group with a space name
-            WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[contains(text(), ' ')]//following-sibling::td//a[@class='btnDeleteGroup']")));
+            WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//td[normalize-space(text()) = '' and text() != '']//following-sibling::td//a[@class='btnDeleteGroup']")));
             deleteButton.click();
 
             // Confirm deletion
@@ -183,7 +188,7 @@ public class TP01_BT01_CG004_InvalidGroupNameWithSpace {
 
             // Wait for the group to be deleted
             try {
-                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and text() != ' ' and following-sibling::td//a[@class='btnDeleteGroup']]")));
+                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and text() != '' and following-sibling::td//a[@class='btnDeleteGroup']]")));
                 System.out.println("Invalid Group deleted successfully!");
             } catch (Exception e) {
                 System.out.println("Invalid Group deletion failed, please delete manually.");
