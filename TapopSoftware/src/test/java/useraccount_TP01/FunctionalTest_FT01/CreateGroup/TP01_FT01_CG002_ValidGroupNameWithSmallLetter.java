@@ -135,11 +135,19 @@ public class TP01_FT01_CG002_ValidGroupNameWithSmallLetter {
         WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
         groupPage.click();
         WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
-        System.out.println("Group created successfully! Group name: " + createdGroup.getText());
+      
+        String groupName = createdGroup.getText();
+        
+       // Calculate the total length of the group name
+        int totalLength = GROUP_NAME.length(); // Total length of the group name (including spaces)
+        
+        //System.out.println("Group created successfully! Group name: " + createdGroup.getText());
+        System.out.println("Group created successfully! Group name: " + groupName + " (" + totalLength + " digits)");
         } catch (Exception e) {
         System.out.println("Group creation failed.");
         }
         }    
+     
     
     
     // Method to delete the group (after creation)

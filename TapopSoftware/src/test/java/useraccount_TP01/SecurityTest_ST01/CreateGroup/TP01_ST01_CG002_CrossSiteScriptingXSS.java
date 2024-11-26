@@ -1,9 +1,11 @@
-package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
+package useraccount_TP01.SecurityTest_ST01.CreateGroup;
 
+import java.time.Duration;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -11,17 +13,18 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-public class TP01_FT01_CG005_ValidGroupNameWithAlphanumeric {
+public class TP01_ST01_CG002_CrossSiteScriptingXSS {
 
     private static WebDriver driver;
 
     // Class-level variables for credentials
     private static final String USERNAME = "admin";           // Username for login
     private static final String PASSWORD = "Admin123";       // Password for login
-    private static final String GROUP_NAME = "New Group 0102";     // Group name (in capital letter)
+    private static final String GROUP_NAME = "<script>alert('XSS');</script>";     // Group name (with Cross-Site Scripting (XSS))
 
+    // Declare enteredText here so it can be used across different methods
+    private static String enteredText;
+    
     // GroupManagementTest class to handle the test flow
     public static class GroupManagementTest {
 
@@ -115,65 +118,103 @@ public class TP01_FT01_CG005_ValidGroupNameWithAlphanumeric {
 
         WebElement addGroupName = wait.until(ExpectedConditions.elementToBeClickable(By.id("txtGroupName")));
         addGroupName.sendKeys(GROUP_NAME);
+        
+        // Get the value in the input field after sending the text (this is the truncated value)
+        enteredText = addGroupName.getAttribute("value");  // Save entered value to class-level variable
 
+        // Now compare the entered text with the sent data
+        if (enteredText.equals(GROUP_NAME)) {
+            System.out.println("Test failed: The group name allows Cross-Site Scripting (XSS).");
+        } else {
+            System.out.println("Test passed: The group name removed Cross-Site Scripting (XSS)(" + enteredText + ").");
+            System.out.println("The group name does not allow Cross-Site Scripting (XSS).");
+        }
+        
+        
         WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
         saveGroupButton.click();
 
-        WebElement saveGroupLevelButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save")));
-        saveGroupLevelButton.click();
+     // Check for expected behavior (e.g., no script execution)
+        boolean isAlertPresent = false;
+        try {
+        driver.switchTo().alert();
+        isAlertPresent = true;
+        } catch (NoAlertPresentException e) {
+        // No alert means the test passed
+        }
 
-        // Handle the alert (accept the alert)
+        if (!isAlertPresent) {
+        System.out.println("XSS test passed: No alert displayed.");
+        } else {
+        System.out.println("XSS test failed: Alert displayed.");
+        }
+            
+        
+    
+    // Wait for inline error message (if any)
+    try {
+    	//WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
+    	WebElement errorMessage2 = driver.findElement(By.id("errorMessageGroup"));
+        if (errorMessage2.isDisplayed()) {
+            System.out.println("Error message displayed: " + errorMessage2.getText());
+            return;  // Exit the method if the error is shown
+        }
+    } catch (Exception e) {
+        System.out.println("No inline error message found.");
+    }
+
+    // If no error, continue with the group creation process (though ideally, this should not happen for invalid inputs)
+    WebElement saveGroupLevelButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save")));
+    saveGroupLevelButton.click();
+
+    // Handle alert if present
+    try {
         Alert alert = driver.switchTo().alert();
         alert.accept();
-
-        // Wait for the page refresh after saving, then click the back button using JavaScript
-        WebElement backButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='w0']/div/div[3]/div[2]/a")));
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", backButton);
-    
-        // Check if the group has been created by looking for the group name in the list
-        try {
-        WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
-        groupPage.click();
-        WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
-      
-        String groupName = createdGroup.getText();
-        
-       // Calculate the total length of the group name
-        int totalLength = GROUP_NAME.length(); // Total length of the group name (including spaces)
-        
-        //System.out.println("Group created successfully! Group name: " + createdGroup.getText());
-        System.out.println("Group created successfully! Group name: " + groupName + " (" + totalLength + " digits)");
-        } catch (Exception e) {
-        System.out.println("Group creation failed.");
-        }
-        }    
-     
-    
-    
-    // Method to delete the group (after creation)
-    public static void deleteGroup(WebDriver driver) throws Exception {
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-
-        // Navigate back to the group management page
-        WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
-        groupPage.click();
-
-        // Find the group row by its name and click the delete button in the same row
-        WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='"+ GROUP_NAME +"']]/td/a[@class='btnDeleteGroup']")));
-        deleteButton.click();
-
-        // Confirm the deletion in the modal
-        WebElement confirmDeleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='btnModalConfirmSave']")));
-        confirmDeleteButton.click();
-
-        // Wait for the group to be deleted (check if it's no longer visible)
-        try {
-        	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
-            System.out.println("Group deleted successfully!");
-        } catch (Exception e) {
-            System.out.println("Group deletion failed.");
-        }
+    } catch (Exception e) {
+        System.out.println("No alert to handle.");
     }
+
+    WebElement backButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='w0']/div/div[3]/div[2]/a")));
+    JavascriptExecutor js = (JavascriptExecutor) driver;
+    js.executeScript("arguments[0].click();", backButton);
+    
+              
+    // Check if the group has been created by looking for the group name in the list
+    try {
+    WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+    groupPage.click();
+    WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'" + enteredText + "')]")));
+    System.out.println("Invalid Group Name created! Group name: " + createdGroup.getText());
+    } catch (Exception e) {
+    System.out.println("Group creation failed.");
     }
+    }    
+
+
+// Method to delete the group (after creation)
+public static void deleteGroup(WebDriver driver) throws Exception {
+    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+    // Navigate back to the group management page
+    WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+    groupPage.click();
+
+    // Find the group row by its name and click the delete button in the same row
+    WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='" + enteredText + "']]/td/a[@class='btnDeleteGroup']")));
+    deleteButton.click();
+
+    // Confirm the deletion in the modal
+    WebElement confirmDeleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='btnModalConfirmSave']")));
+    confirmDeleteButton.click();
+
+    // Wait for the group to be deleted (check if it's no longer visible)
+    try {
+    	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'" + enteredText + "')]")));
+        System.out.println("Group deleted successfully!");
+    } catch (Exception e) {
+        System.out.println("Group deletion failed.");
+    }
+}
+} 
 }

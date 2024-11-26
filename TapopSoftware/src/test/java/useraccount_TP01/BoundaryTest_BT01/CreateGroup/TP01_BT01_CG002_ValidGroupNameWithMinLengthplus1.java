@@ -1,5 +1,6 @@
-package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
+package useraccount_TP01.BoundaryTest_BT01.CreateGroup;
 
+import java.time.Duration;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -11,16 +12,14 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-public class TP01_FT01_CG005_ValidGroupNameWithAlphanumeric {
+public class TP01_BT01_CG002_ValidGroupNameWithMinLengthplus1 {
 
     private static WebDriver driver;
 
     // Class-level variables for credentials
     private static final String USERNAME = "admin";           // Username for login
     private static final String PASSWORD = "Admin123";       // Password for login
-    private static final String GROUP_NAME = "New Group 0102";     // Group name (in capital letter)
+    private static final String GROUP_NAME = "A2";           // Group name (2 character)
 
     // GroupManagementTest class to handle the test flow
     public static class GroupManagementTest {
@@ -136,19 +135,11 @@ public class TP01_FT01_CG005_ValidGroupNameWithAlphanumeric {
         WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
         groupPage.click();
         WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
-      
-        String groupName = createdGroup.getText();
-        
-       // Calculate the total length of the group name
-        int totalLength = GROUP_NAME.length(); // Total length of the group name (including spaces)
-        
-        //System.out.println("Group created successfully! Group name: " + createdGroup.getText());
-        System.out.println("Group created successfully! Group name: " + groupName + " (" + totalLength + " digits)");
+        System.out.println("Group created successfully! Group name: " + createdGroup.getText());
         } catch (Exception e) {
         System.out.println("Group creation failed.");
         }
         }    
-     
     
     
     // Method to delete the group (after creation)

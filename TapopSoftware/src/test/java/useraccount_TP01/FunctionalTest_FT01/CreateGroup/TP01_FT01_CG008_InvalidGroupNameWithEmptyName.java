@@ -157,17 +157,24 @@ public class TP01_FT01_CG008_InvalidGroupNameWithEmptyName {
             js.executeScript("arguments[0].click();", backButton);
 
    
-        // Check if the group has been created by looking for the group name in the list
-        try {
-        WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
-        groupPage.click();
-        WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and not(contains(text(), ' ')) and following-sibling::td//a[@class='btnDeleteGroup']]")));
-        System.out.println("Group name creation invalid! Group name: " + createdGroup.getText());
-        } catch (Exception e) {
-        System.out.println("Group creation failed.");
-        }
-        }    
-        
+            // Check if the group has been created by looking for the group name in the list
+            try {
+            WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
+            groupPage.click();
+            WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
+          
+            String groupName = createdGroup.getText();
+            
+           // Calculate the total length of the group name
+            int totalLength = GROUP_NAME.length(); // Total length of the group name (including spaces)
+            
+            //System.out.println("Group created successfully! Group name: " + createdGroup.getText());
+            System.out.println("Group created successfully! Group name: " + groupName + " (" + totalLength + " digits)");
+            } catch (Exception e) {
+            System.out.println("Group creation failed.");
+            }
+            }    
+                
         
         
         // Method to delete the group if it exists

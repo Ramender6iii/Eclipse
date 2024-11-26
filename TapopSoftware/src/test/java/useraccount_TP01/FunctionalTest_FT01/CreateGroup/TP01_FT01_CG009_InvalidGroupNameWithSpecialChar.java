@@ -20,7 +20,7 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
     // Class-level variables for credentials
     private static final String USERNAME = "admin";           // Username for login
     private static final String PASSWORD = "Admin123";       // Password for login
-    private static final String GROUP_NAME = "New () Group";  // Group name (with ~ invalid Special Character)
+    private static final String GROUP_NAME = "\"~`^&*()\\\\|[]{};:'\\\"<>,?/\"";  // Group name (with invalid Special Character)
     
     // Declare enteredText here so it can be used across different methods
     private static String enteredText;
@@ -135,18 +135,29 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
                         
             WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
             saveGroupButton.click();
+            
+            
+         // Check for expected behavior (e.g., error message)
+            WebElement errorMessage = driver.findElement(By.id("errorMessage"));
+            if (errorMessage.isDisplayed()) {
+            System.out.println("Invalid input functional test passed: Error message displayed.");
+            } else {
+            System.out.println("Invalid input functional test failed: No error message displayed.");
+            }
+            
+            
 
             // Check if an alert is present (handle alert error)
             try {
                 Alert alert = wait.until(ExpectedConditions.alertIsPresent());
                 System.out.println("Alert message: " + alert.getText());
                 alert.accept();  // Accept the alert
-                return;  // Exit after handling the alert
+              //  return;  // Exit after handling the alert
             } catch (Exception e) {
                 System.out.println("No alert found.");
             }
 
-            // Wait for inline error message (if any)
+           /* // Wait for inline error message (if any)
             try {
             	//WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
             	WebElement errorMessage = driver.findElement(By.id("errorMessageGroup"));
@@ -160,7 +171,7 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
 
             // If no error, continue with the group creation process (though ideally, this should not happen for invalid inputs)
             WebElement saveGroupLevelButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save")));
-            saveGroupLevelButton.click();
+            saveGroupLevelButton.click();*/
 
             // Handle alert if present
             try {
@@ -179,12 +190,20 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
             try {
             WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
             groupPage.click();
-            WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'" + enteredText + "')]")));
-            System.out.println("Invalid Group Name created! Group name: " + createdGroup.getText());
+            WebElement createdGroup = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'"+ GROUP_NAME +"')]")));
+          
+            String groupName = createdGroup.getText();
+            
+           // Calculate the total length of the group name
+            int totalLength = GROUP_NAME.length(); // Total length of the group name (including spaces)
+            
+            //System.out.println("Group created successfully! Group name: " + createdGroup.getText());
+            System.out.println("Group created successfully! Group name: " + groupName + " (" + totalLength + " digits)");
             } catch (Exception e) {
             System.out.println("Group creation failed.");
             }
             }    
+        
         
         
         // Method to delete the group (after creation)

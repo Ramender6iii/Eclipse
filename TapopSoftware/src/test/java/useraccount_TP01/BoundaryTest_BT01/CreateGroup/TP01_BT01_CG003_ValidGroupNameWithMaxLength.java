@@ -1,5 +1,6 @@
-package useraccount_TP01.FunctionalTest_FT01.CreateGroup;
+package useraccount_TP01.BoundaryTest_BT01.CreateGroup;
 
+import java.time.Duration;
 
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -11,16 +12,14 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.time.Duration;
-
-public class TP01_FT01_CG005_ValidGroupNameWithAlphanumeric {
+public class TP01_BT01_CG003_ValidGroupNameWithMaxLength {
 
     private static WebDriver driver;
-
+    
     // Class-level variables for credentials
     private static final String USERNAME = "admin";           // Username for login
     private static final String PASSWORD = "Admin123";       // Password for login
-    private static final String GROUP_NAME = "New Group 0102";     // Group name (in capital letter)
+    private static final String GROUP_NAME = "ABCDEFG !@ hijklmn #$ 01234567";  // Group name (max 30 character)
 
     // GroupManagementTest class to handle the test flow
     public static class GroupManagementTest {
@@ -148,7 +147,6 @@ public class TP01_FT01_CG005_ValidGroupNameWithAlphanumeric {
         System.out.println("Group creation failed.");
         }
         }    
-     
     
     
     // Method to delete the group (after creation)
