@@ -124,43 +124,33 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
             // Get the value in the input field after sending the text (this is the truncated value)
             enteredText = addGroupName.getAttribute("value");  // Save entered value to class-level variable
 
-            // Now compare the entered text with the sent data
+            // compare the entered text with the sent data
             if (enteredText.equals(GROUP_NAME)) {
                 System.out.println("Test failed: The group name allows invalid Special character.");
             } else {
                 System.out.println("Test passed: The group name removed invalid Special character(" + enteredText + ").");
-                System.out.println("The group name does not invalid Special character.");
             }
             
-                        
+        
+         // Click the save button            
             WebElement saveGroupButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("btnGroupSave")));
             saveGroupButton.click();
             
             
-         // Check for expected behavior (e.g., error message)
-            WebElement errorMessage = driver.findElement(By.id("errorMessage"));
-            if (errorMessage.isDisplayed()) {
-            System.out.println("Invalid input functional test passed: Error message displayed.");
-            } else {
-            System.out.println("Invalid input functional test failed: No error message displayed.");
-            }
-            
-            
-
             // Check if an alert is present (handle alert error)
             try {
                 Alert alert = wait.until(ExpectedConditions.alertIsPresent());
                 System.out.println("Alert message: " + alert.getText());
                 alert.accept();  // Accept the alert
-              //  return;  // Exit after handling the alert
+                return;  // Exit after handling the alert
             } catch (Exception e) {
                 System.out.println("No alert found.");
             }
 
-           /* // Wait for inline error message (if any)
+         // Wait for inline error message (if any)
             try {
-            	//WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
-            	WebElement errorMessage = driver.findElement(By.id("errorMessageGroup"));
+            	WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
+            	//WebElement errorMessage = driver.findElement(By.id("errorMessageGroup"));
                 if (errorMessage.isDisplayed()) {
                     System.out.println("Error message displayed: " + errorMessage.getText());
                     return;  // Exit the method if the error is shown
@@ -171,7 +161,7 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
 
             // If no error, continue with the group creation process (though ideally, this should not happen for invalid inputs)
             WebElement saveGroupLevelButton = wait.until(ExpectedConditions.elementToBeClickable(By.id("save")));
-            saveGroupLevelButton.click();*/
+            saveGroupLevelButton.click();
 
             // Handle alert if present
             try {
@@ -184,8 +174,8 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
             WebElement backButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='w0']/div/div[3]/div[2]/a")));
             JavascriptExecutor js = (JavascriptExecutor) driver;
             js.executeScript("arguments[0].click();", backButton);
-            
-                      
+
+   
             // Check if the group has been created by looking for the group name in the list
             try {
             WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
@@ -203,32 +193,32 @@ public class TP01_FT01_CG009_InvalidGroupNameWithSpecialChar {
             System.out.println("Group creation failed.");
             }
             }    
+                
         
         
-        
-        // Method to delete the group (after creation)
+        // Method to delete the group if it exists
         public static void deleteGroup(WebDriver driver) throws Exception {
-            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
 
-            // Navigate back to the group management page
+            // Navigate to the group management page
             WebElement groupPage = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='myPjax']/ul/li[2]/a/strong")));
             groupPage.click();
 
-            // Find the group row by its name and click the delete button in the same row
-            WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//tr[td[text()='" + enteredText + "']]/td/a[@class='btnDeleteGroup']")));
+            // Find and click the delete button for the group with a space name
+            WebElement deleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("td[normalize-space(text()) = '' and not(contains(text(), ' '))]]//following-sibling::td//a[@class='btnDeleteGroup']")));
             deleteButton.click();
 
-            // Confirm the deletion in the modal
+            // Confirm deletion
             WebElement confirmDeleteButton = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//*[@id='btnModalConfirmSave']")));
             confirmDeleteButton.click();
 
-            // Wait for the group to be deleted (check if it's no longer visible)
+            // Wait for the group to be deleted
             try {
-            	wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id='group-grid']/table/tbody//td[contains(text(),'" + enteredText + "')]")));
-                System.out.println("Group deleted successfully!");
+                wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//td[normalize-space(text()) = '' and not(contains(text(), ' ')) and following-sibling::td//a[@class='btnDeleteGroup']]")));
+                System.out.println("Invalid Group deleted successfully!");
             } catch (Exception e) {
-                System.out.println("Group deletion failed.");
+                System.out.println("Invalid Group deletion failed, please delete manually.");
             }
         }
-        }
     }
+}

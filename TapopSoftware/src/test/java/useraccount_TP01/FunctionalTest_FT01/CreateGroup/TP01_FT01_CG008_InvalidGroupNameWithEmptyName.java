@@ -130,8 +130,8 @@ public class TP01_FT01_CG008_InvalidGroupNameWithEmptyName {
 
             // Wait for inline error message (if any)
             try {
-            	//WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
-            	WebElement errorMessage = driver.findElement(By.id("errorMessageGroup"));
+            	WebElement errorMessage = wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("errorMessageGroup")));
+            	//WebElement errorMessage = driver.findElement(By.id("errorMessageGroup"));
                 if (errorMessage.isDisplayed()) {
                     System.out.println("Error message displayed: " + errorMessage.getText());
                     return;  // Exit the method if the error is shown
